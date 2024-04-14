@@ -233,7 +233,7 @@ int main(int argc, char **argv)
         string outputFilePath = argv[3];
         int chunksize = stoi(argv[4]);
         auto key = getKeyFromFile(argv[5]);
-        encryptFile(inputFilePath, outputFilePath, chunksize, key);
+        decryptFile(inputFilePath, outputFilePath, chunksize, key);
     }
     else if (function == "generate-key" && argc == 5)
     {
