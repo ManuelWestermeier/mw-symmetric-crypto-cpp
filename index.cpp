@@ -50,6 +50,7 @@ Key generate_key(int enc_chunk_size, int secureLevel)
         n.y = rand() % enc_chunk_size;
         key.push_back(n);
     }
+
     return key;
 }
 
@@ -129,6 +130,64 @@ Key getKeyFromFile(string fileName)
     return out;
 }
 
+int encryptFile(string inputFilePath, string outputFilePath, int chunksize, Key key)
+{
+    ifstream inputFile(inputFilePath);
+    ofstream outputFile(outputFilePath);
+
+    // Check if the file opened successfully
+    if (!inputFile.is_open())
+    {
+        cerr << "Error opening the file!" << endl;
+        return 1;
+    }
+    // Check if the file opened successfully
+    if (!outputFile.is_open())
+    {
+        cerr << "Error opening the file!" << endl;
+        return 1;
+    }
+
+    while (!inputFile.eof())
+    {
+        char chunk[chunksize];
+        inputFile.read(chunk, chunksize);
+        string encryptedChunk = encrypt(chunk, key);
+        outputFile << encryptedChunk;
+    }
+
+    return 0;
+}
+
+int decryptFile(string inputFilePath, string outputFilePath, int chunksize, Key key)
+{
+    ifstream inputFile(inputFilePath);
+    ofstream outputFile(outputFilePath);
+
+    // Check if the file opened successfully
+    if (!inputFile.is_open())
+    {
+        cerr << "Error opening the file!" << endl;
+        return 1;
+    }
+    // Check if the file opened successfully
+    if (!outputFile.is_open())
+    {
+        cerr << "Error opening the file!" << endl;
+        return 1;
+    }
+
+    while (!inputFile.eof())
+    {
+        char chunk[chunksize];
+        inputFile.read(chunk, chunksize);
+        string decryptedChunk = decrypt(chunk, key);
+        outputFile << decryptedChunk;
+    }
+
+    return 0;
+}
+
 void test()
 {
     cout << "MWENCRYPTION V1.0.0 TEST : Hello World" << endl;
@@ -160,11 +219,21 @@ int main(int argc, char **argv)
 
     string function = argv[1];
 
-    if (function == "enc")
+    if (function == "enc" && argc == 6)
     {
+        string inputFilePath = argv[2];
+        string outputFilePath = argv[3];
+        int chunksize = stoi(argv[4]);
+        auto key = getKeyFromFile(argv[5]);
+        encryptFile(inputFilePath, outputFilePath, chunksize, key);
     }
-    else if (function == "dec")
+    else if (function == "dec" && argc == 6)
     {
+        string inputFilePath = argv[2];
+        string outputFilePath = argv[3];
+        int chunksize = stoi(argv[4]);
+        auto key = getKeyFromFile(argv[5]);
+        encryptFile(inputFilePath, outputFilePath, chunksize, key);
     }
     else if (function == "generate-key" && argc == 5)
     {
